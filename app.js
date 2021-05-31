@@ -3,11 +3,23 @@ const path = require('path');
 const mysql = require("mysql");
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
+const passport  = require('passport');
+const session = require('express-session');
+
+
+require('./passport')(passport) // as strategy in ./passport.js needs passport object
+
+
 
 dotenv.config({ path: './.env'})
 
 const app = express();
+app.use(session({
+    secret: 'mysupersecretpassword',
+  }))
+  
 
+app.use(passport.initialize());
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,

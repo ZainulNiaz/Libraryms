@@ -26,6 +26,8 @@ exports.login = async (req, res) => {
                  message: 'Incorrect Credentials'
              })
             } else {
+                req.session.isLoggedIn = true;
+                req.session.user = results[0];
                 const id = results[0].id;
 
                 const token = jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -99,6 +101,7 @@ exports.adminlogin = async (req, res) => {
         console.log(error);
     }
 }
+
 
 
 
