@@ -47,6 +47,20 @@ router.get('/clienthome', (req, res) => {
 
 });
 
+router.get('/adminhome', (req, res) => {
+    // res.render('clienthome');
+    
+    
+    var sql='SELECT * FROM books';
+    db.query(sql, function (err, data, fields) {
+    if (err) throw err;
+    res.render('adminhome.ejs', { title: 'Book List', bookData: data});
+  });
+
+
+
+});
+
 
 
 
