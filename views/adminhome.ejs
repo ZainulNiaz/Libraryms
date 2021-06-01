@@ -12,7 +12,9 @@
             <th>S.N</th>
             <th>Title</th>
             <th>Borrowed by </th>
-            <th>Password</th>
+            <th>Requested by</th>
+            <th>Approve </th>
+            <th>Deny </th>
         </tr>
         
         <%
@@ -24,7 +26,40 @@
             <td><%=data.bookid %></td>
             <td><%=data.title %></td>
             <td><%=data.bookuser %></td>
-            
+            <td><%=data.requestedby %></td>
+
+            <% if(data.bookuser=='admin' && data.requestedby) {%>
+           
+                <td> <form action="/auth/approverequest" method="POST">
+                    <input type="hidden" id="bookid" name="bookid" value=<%- data.bookid %>  >
+                    <input type="hidden" id="userid" name="userid" value=<%- data.requestedby %> >
+         
+                   <button type="hidden" class="btn btn-primary"> Approve</button>
+                   
+                   </form> 
+                   
+               </td>
+             
+                <% } else { %>
+                <td> </td>
+                <% } %>
+
+                <% if(data.bookuser=='admin' && data.requestedby) {%>
+           
+                    <td> <form action="/auth/denyrequest" method="POST">
+                        <input type="hidden" id="bookid" name="bookid" value=<%- data.bookid %>  >
+                        <input type="hidden" id="userid" name="userid" value=<%- data.requestedby %> >
+             
+                       <button type="hidden" class="btn btn-primary"> deny</button>
+                       
+                       </form> 
+                       
+                   </td>
+                 
+                    <% } else { %>
+                    <td> </td>
+                    <% } %>
+    
 
         </tr>
         <%  i++; }) %>

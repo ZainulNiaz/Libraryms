@@ -37,10 +37,10 @@ router.get('/clienthome', (req, res) => {
     // res.render('clienthome');
     
     
-    var sql='SELECT * FROM users';
+    var sql='SELECT * FROM books';
     db.query(sql, function (err, data, fields) {
     if (err) throw err;
-    res.render('clienthome.ejs', { title: 'User List', userData: data});
+    res.render('clienthome.ejs', { title: 'Book List', bookData: data, user: req.session.user});
   });
 
 
@@ -54,7 +54,7 @@ router.get('/adminhome', (req, res) => {
     var sql='SELECT * FROM books';
     db.query(sql, function (err, data, fields) {
     if (err) throw err;
-    res.render('adminhome.ejs', { title: 'Book List', bookData: data});
+    res.render('adminhome.ejs', { title: 'Book List', bookData: data, user: req.session.user});
   });
 
 

@@ -1,7 +1,6 @@
 const mysql = require("mysql");
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcryptjs');
-
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
@@ -27,7 +26,7 @@ exports.login = async (req, res) => {
              })
             } else {
                 req.session.isLoggedIn = true;
-                req.session.user = results[0];
+                req.session.user = results[0].id;
                 const id = results[0].id;
 
                 const token = jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -121,15 +120,256 @@ exports.addbook = (req, res) => {
         }
         else{
             console.log(results);
-            return res.render('adminhome.ejs', {
-                message: 'Book added'
-            })
+            
+            var sql='SELECT * FROM books';
+            db.query(sql, function (err, data, fields) 
+            
+            
+            {
+            if (err) throw err;
+            return res.render('adminhome.ejs', { title: 'Book List', bookData: data, user: req.session.user});
+          });
+        
+
+
         }
     } )
 
 
     // res.send("Form Submitted");
 }
+
+
+exports.bookrequest = (req, res) => {
+    console.log(req.body);
+
+    try{
+        const {bookid} = req.body;
+        
+        if(!bookid){
+            return res.status(400).render('clienthome', {
+                message: 'Please provide a book id'
+            })
+        }
+
+        db.query('Select * FROM books WHERE bookid = ?',[bookid], async(error, results) => {
+            console.log(results);
+            if(!results ){
+             res.status(401).render('clienthome', {
+                 message: 'Incorrect ID'
+             })
+            } 
+            
+           else  if(results[0].bookuser!="admin" ){
+                res.status(401).render('clienthome', {
+                    message: 'Book lent already'
+                })
+               } 
+            
+            
+            else {
+                req.session.isLoggedIn = true;
+                userid = req.session.user;
+                console.log("userid " + userid);
+
+
+                db.query("UPDATE books SET requestedby= ? WHERE bookid= ? ",[userid, bookid]  ,async (error)  => { 
+                    if(error){
+                        console.log(error);
+                    }
+                    else{
+                        console.log(results);
+                        
+                        var sql='SELECT * FROM books';
+                        db.query(sql, function (err, data, fields) 
+                        
+                        
+                        {
+                        if (err) throw err;
+                        return res.render('clienthome.ejs', { title: 'Book List', bookData: data, user: req.session.user});
+                      });
+                    
+            
+            
+                    }
+                } )
+            
+                
+                
+
+
+                // res.status(200).redirect("/clienthome");
+            }
+        } )
+
+
+
+    }
+    catch(error){
+        console.log(error);
+    }
+
+
+
+
+
+
+
+}
+
+
+
+
+exports.approverequest = (req, res) => {
+    console.log(req.body);
+    console.log("approve request");
+    const{bookid, userid} = req.body;
+
+
+    
+    db.query("UPDATE books SET bookuser= ? WHERE bookid= ? ",[userid, bookid]  ,async (error)  => { 
+        if(error){
+            console.log(error);
+        }
+        else{
+            // console.log(results);
+            
+            var sql='SELECT * FROM books';
+            db.query(sql, function (err, data, fields) 
+            
+            
+            {
+            if (err) throw err;
+            return res.render('adminhome.ejs', { title: 'Book List', bookData: data, user: req.session.user});
+          });
+        
+
+
+        }
+    } )
+
+    db.query("UPDATE books SET requestedby= ? WHERE bookid= ? ",[null, bookid]  ,async (error)  => { 
+        if(error){
+            console.log(error);
+        }
+        else{
+            // console.log(results);
+            
+            var sql='SELECT * FROM books';
+            db.query(sql, function (err, data, fields) 
+            
+            
+            {
+            if (err) throw err;
+            return res.render('adminhome.ejs', { title: 'Book List', bookData: data});
+          });
+        
+
+
+        }
+    } )
+
+
+
+
+
+
+
+}
+
+
+exports.returnbook = (req, res) => {
+    console.log(req.body);
+    console.log("approve request");
+    const{bookid, userid} = req.body;
+
+
+    
+    db.query("UPDATE books SET bookuser= ? WHERE bookid= ? ",["admin", bookid]  ,async (error)  => { 
+        if(error){
+            console.log(error);
+        }
+        else{
+            // console.log(results);
+            
+            var sql='SELECT * FROM books';
+            db.query(sql, function (err, data, fields) 
+            
+            
+            {
+            if (err) throw err;
+            return res.render('clienthome.ejs', { title: 'Book List', bookData: data, user: req.session.user});
+          });
+        
+
+
+        }
+    } )
+
+    db.query("UPDATE books SET requestedby= ? WHERE bookid= ? ",[null, bookid]  ,async (error)  => { 
+        if(error){
+            console.log(error);
+        }
+        else{
+            // console.log(results);
+            
+            var sql='SELECT * FROM books';
+            db.query(sql, function (err, data, fields) 
+            
+            
+            {
+            if (err) throw err;
+            return res.render('adminhome.ejs', { title: 'Book List', bookData: data});
+          });
+        
+
+
+        }
+    } )
+
+
+
+
+
+
+
+}
+
+
+exports.denyrequest = (req, res) => {
+    console.log(req.body);
+    console.log("deny request");
+    const{bookid, userid} = req.body;
+
+    db.query("UPDATE books SET requestedby= ? WHERE bookid= ? ",[null, bookid]  ,async (error)  => { 
+        if(error){
+            console.log(error);
+        }
+        else{
+            // console.log(results);
+            
+            var sql='SELECT * FROM books';
+            db.query(sql, function (err, data, fields) 
+            
+            
+            {
+            if (err) throw err;
+            return res.render('adminhome.ejs', { title: 'Book List', bookData: data, user: req.session.user});
+          });
+        
+
+
+        }
+    } )
+
+
+
+
+
+
+
+}
+
 
 
 exports.register = (req, res) => {

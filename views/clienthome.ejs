@@ -9,30 +9,88 @@
     <table border="1">
         <tr>
             <th>S.N</th>
-            <th>Full Name</th>
-            <th>Email Address</th>
-            <th>Password</th>
-        </tr>
-        
-        <%
-        if(userData.length!=0){
-        var i=1;
-        userData.forEach(function(data){
-        %>
-        <tr>
-            <td><%=data.id %></td>
-            <td><%=data.name %></td>
-            <td><%=data.email %></td>
-            <td><%=data.password %></td>
+            <th>Title Name</th>
+            <th>Request</th>
+            <th>Return</th>
+
 
         </tr>
+       
+        
+        
+        <%
+        if(bookData.length!=0){
+        var i=1;
+        bookData.forEach(function(data){
+        %>
+        <tr>
+            <td><%=data.bookid %></td>
+            <td><%=data.title %></td>
+
+           <% if(data.bookuser=='admin' && !data.requestedby) {%>
+           
+            <td> <p> available </p> </td>
+
+            <% } else if(data.bookuser==user) { %>
+                <td> <p> owned </p> </td>
+            
+            
+            
+            <% } else { %>
+            <td> <p> not available </p> </td>
+            <% } %>
+
+
+            <% if(data.bookuser==user) {%>
+                <td> <form action="/auth/returnbook" method="POST">
+                    <input type="hidden" id="bookid" name="bookid" value=<%- data.bookid %>  >
+                    <input type="hidden" id="userid" name="userid" value=<%- data.requestedby %> >
+         
+                   <button type="hidden" class="btn btn-primary"> return</button>
+                   
+                   </form> 
+                   
+               </td>          
+                <% } else { %>
+            
+                <% } %>
+           
+
+            
+        </tr>
         <%  i++; }) %>
-        <% } else{ %>
+        <% } else if(bookData.length==0){ %>
             <tr>
                 <td colspan="7">No Data Found</td>
             </tr>
         <% } %>
+
+        
     </table>
     </div>
+
+    <div class="container mt-4">
+        <div class="card" >
+             <div class="card-header">
+                 Request Book
+             </div>
+             <div class="card-body">
+                 <form action="/auth/bookrequest" method="POST">
+                     
+                     <div class="mb-3">
+                         <label for="name" class="form-label">Enter id of Book</label>
+                         <input type="text" class="form-control" id="bookid" name= "bookid">
+                     </div>
+    
+                 
+                     <button type="submit" class="btn btn-primary"> Submit Request</button>
+                 </form>
+             </div>
+         </div>
+    </div>
+
+
+
+
 </body>
 </html>

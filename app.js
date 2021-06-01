@@ -3,11 +3,9 @@ const path = require('path');
 const mysql = require("mysql");
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
-const passport  = require('passport');
 const session = require('express-session');
 
 
-require('./passport')(passport) // as strategy in ./passport.js needs passport object
 
 
 
@@ -19,7 +17,6 @@ app.use(session({
   }))
   
 
-app.use(passport.initialize());
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
@@ -31,7 +28,7 @@ const publicDirectory = path.join(__dirname , './public')
 app.use(express.static(publicDirectory));
 
 // Parse URL-encoded bodies (as sent by HTML forms)
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({extended: true}));
 // Parse json bodies (as sent by API clients)
 app.use(express.json());
 app.use(cookieParser());

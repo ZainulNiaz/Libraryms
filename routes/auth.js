@@ -14,6 +14,16 @@ router.post('/adminlogin', authController.adminlogin);
 
 router.post('/addbook', authController.addbook);
 
+router.post('/bookrequest', authController.bookrequest);
+
+router.post('/approverequest', authController.approverequest);
+
+
+
+router.post('/returnbook', authController.returnbook);
+
+router.post('/denyrequest', authController.denyrequest);
+
 router.get(
     "/current",
     (req, res, next) => {
